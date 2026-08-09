@@ -1,0 +1,12 @@
+{
+  "appId": "com.personal.stockai",
+  "appName": "股研 AI",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "backgroundColor": "#07111f"
+  }
+}

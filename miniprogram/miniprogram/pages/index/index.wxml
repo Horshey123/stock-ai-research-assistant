@@ -1,0 +1,93 @@
+<view class="page home-page">
+  <view class="hero">
+    <view class="eyebrow">AI STOCK RESEARCH</view>
+    <view class="hero-title">把复杂数据，变成清晰判断</view>
+    <view class="hero-subtitle">
+      输入 A 股代码，获取基本面、估值、趋势和风险的综合分析。
+    </view>
+    <view class="service-pill {{serviceStatus}}">
+      <view class="service-dot"></view>
+      <text>{{serviceText}}</text>
+    </view>
+  </view>
+
+  <view class="card search-card">
+    <view class="section-label">股票代码</view>
+    <view class="input-row">
+      <input
+        class="code-input"
+        type="number"
+        maxlength="6"
+        value="{{code}}"
+        placeholder="例如：600519"
+        placeholder-class="input-placeholder"
+        bindinput="onCodeInput"
+      />
+      <view class="digit-count">{{code.length}}/6</view>
+    </view>
+
+    <view class="example-row">
+      <view
+        class="example-chip {{code === item.code ? 'selected' : ''}}"
+        wx:for="{{examples}}"
+        wx:key="code"
+        data-code="{{item.code}}"
+        bindtap="chooseExample"
+      >
+        <text>{{item.name}}</text>
+        <text class="example-code">{{item.code}}</text>
+      </view>
+    </view>
+
+    <view class="refresh-row">
+      <view>
+        <view class="refresh-title">强制重新获取数据</view>
+        <view class="refresh-desc">关闭时可复用24小时内的报告，响应更快</view>
+      </view>
+      <switch
+        checked="{{refreshData}}"
+        color="#0B7A5A"
+        bindchange="onRefreshChange"
+      />
+    </view>
+
+    <button
+      class="primary-button"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+      bindtap="submitAnalysis"
+    >
+      {{submitting ? "正在创建任务" : "开始 AI 分析"}}
+    </button>
+    <button
+      class="secondary-button"
+      loading="{{latestLoading}}"
+      disabled="{{latestLoading}}"
+      bindtap="viewLatestReport"
+    >
+      查看该股票最近报告
+    </button>
+  </view>
+
+  <view class="feature-grid">
+    <view class="feature-item card">
+      <view class="feature-icon">基</view>
+      <view class="feature-title">基本面</view>
+      <view class="feature-desc">盈利与财务质量</view>
+    </view>
+    <view class="feature-item card">
+      <view class="feature-icon">估</view>
+      <view class="feature-title">估值</view>
+      <view class="feature-desc">PE、PB历史位置</view>
+    </view>
+    <view class="feature-item card">
+      <view class="feature-icon">势</view>
+      <view class="feature-title">走势</view>
+      <view class="feature-desc">均线与情景推演</view>
+    </view>
+  </view>
+
+  <view class="notice">
+    本工具仅用于个人研究和项目演示，不构成任何投资建议。
+  </view>
+</view>

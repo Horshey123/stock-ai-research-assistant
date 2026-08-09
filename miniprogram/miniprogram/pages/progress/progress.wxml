@@ -1,0 +1,52 @@
+<view class="page progress-page">
+  <view class="progress-hero">
+    <view class="stock-code">{{code || "股票分析"}}</view>
+    <view class="status-title">{{statusText}}</view>
+    <view class="status-message">{{message}}</view>
+
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+    <view class="progress-number">{{progress}}%</view>
+  </view>
+
+  <view class="card steps-card">
+    <view class="card-title">分析流程</view>
+    <view
+      class="step-row {{item.state}}"
+      wx:for="{{steps}}"
+      wx:key="key"
+    >
+      <view class="step-rail">
+        <view class="step-dot">
+          <text wx:if="{{item.state === 'done'}}">✓</text>
+        </view>
+        <view class="step-line" wx:if="{{index !== steps.length - 1}}"></view>
+      </view>
+      <view class="step-content">
+        <view class="step-title">{{item.label}}</view>
+        <view class="step-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="error-card" wx:if="{{error}}">
+    <view class="error-title">后端返回的信息</view>
+    <view class="error-text">{{error}}</view>
+  </view>
+
+  <view class="button-row" wx:if="{{stopped}}">
+    <button
+      class="retry-button"
+      wx:if="{{status !== 'failed'}}"
+      bindtap="retryPoll"
+    >重新查询</button>
+    <button class="home-button" bindtap="backHome">
+      {{status === "failed" ? "重新分析" : "返回首页"}}
+    </button>
+  </view>
+
+  <view class="waiting-tip" wx:else>
+    数据抓取和 AI 分析可能需要几分钟，请保持后端服务运行。
+  </view>
+</view>

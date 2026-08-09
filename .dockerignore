@@ -1,0 +1,15 @@
+.git
+.gitignore
+.venv
+.vscode
+.idea
+__pycache__
+*.py[cod]
+*.zip
+.env
+.env.*
+!.env.server.example
+data
+miniprogram
+tests
+scripts

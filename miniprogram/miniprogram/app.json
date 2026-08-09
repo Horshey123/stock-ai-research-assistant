@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/progress/progress",
+    "pages/report/report"
+  ],
+  "window": {
+    "backgroundColor": "#F4F7F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#0B3B2E",
+    "navigationBarTitleText": "AI 股票研究助手",
+    "navigationBarTextStyle": "white"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

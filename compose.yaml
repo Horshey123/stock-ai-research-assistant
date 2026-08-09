@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stock-ai-api
+    restart: unless-stopped
+    env_file:
+      - .env.server
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "8000:8000"
+    volumes:
+      - stock_ai_data:/app/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=5)"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    stop_grace_period: 30s
+
+volumes:
+  stock_ai_data:
+    name: stock_ai_data

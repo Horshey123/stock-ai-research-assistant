@@ -1,0 +1,299 @@
+<view class="page report-page">
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-ring"></view>
+    <view class="loading-title">正在读取分析报告</view>
+    <view class="loading-desc">请稍候……</view>
+  </view>
+
+  <view class="error-state card" wx:elif="{{error}}">
+    <view class="error-icon">!</view>
+    <view class="error-title">报告读取失败</view>
+    <view class="error-desc">{{error}}</view>
+    <button class="retry-button" bindtap="loadReport">重新读取</button>
+    <button class="plain-button" bindtap="backHome">返回首页</button>
+  </view>
+
+  <block wx:else>
+    <view class="report-hero">
+      <view class="stock-line">
+        <view>
+          <view class="stock-name">{{report.name}}</view>
+          <view class="stock-meta">{{report.code}} · {{report.industry}}</view>
+        </view>
+        <view class="rating-tag">{{report.rating}}</view>
+      </view>
+
+      <view class="score-row">
+        <view class="score-circle">
+          <text class="score-value">{{report.score}}</text>
+          <text class="score-unit">/100</text>
+        </view>
+        <view class="score-info">
+          <view class="score-label">AI 综合评分</view>
+          <view class="confidence">分析置信度：{{report.confidence}}</view>
+          <view class="generated-at">{{report.generatedAt}}</view>
+        </view>
+      </view>
+
+      <view class="fact-row">
+        <view class="fact-item">
+          <view class="fact-value">{{report.latestClose}}</view>
+          <view class="fact-label">最新收盘</view>
+        </view>
+        <view class="fact-item">
+          <view class="fact-value">{{report.peTtm}}</view>
+          <view class="fact-label">PE(TTM)</view>
+        </view>
+        <view class="fact-item">
+          <view class="fact-value">{{report.pbMrq}}</view>
+          <view class="fact-label">PB(MRQ)</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card report-card summary-card">
+      <view class="section-title">核心结论</view>
+      <view class="summary-text">{{report.summary}}</view>
+      <button class="copy-button" bindtap="copySummary">复制摘要</button>
+    </view>
+
+    <view class="card report-card">
+      <view class="section-title">五维评分</view>
+      <view
+        class="score-card"
+        wx:for="{{report.scoreCards}}"
+        wx:key="key"
+      >
+        <view class="score-card-head">
+          <text class="score-name">{{item.label}}</text>
+          <text class="score-number">{{item.score}}/{{item.maxScore}}</text>
+        </view>
+        <view class="score-bar">
+          <view class="score-bar-fill" style="width: {{item.percent}}%;"></view>
+        </view>
+        <view class="score-reason">{{item.reason}}</view>
+      </view>
+    </view>
+
+    <view
+      class="card report-card analysis-card"
+      wx:for="{{report.sections}}"
+      wx:key="key"
+      wx:for-item="section"
+    >
+      <view class="section-title">{{section.title}}</view>
+      <view class="conclusion">{{section.conclusion}}</view>
+
+      <block wx:if="{{section.evidence.length}}">
+        <view class="list-heading positive-heading">关键证据</view>
+        <view
+          class="bullet-row"
+          wx:for="{{section.evidence}}"
+          wx:key="*this"
+          wx:for-item="text"
+        >
+          <view class="bullet positive"></view>
+          <view class="bullet-text">{{text}}</view>
+        </view>
+      </block>
+
+      <block wx:if="{{section.positiveEvents.length}}">
+        <view class="list-heading positive-heading">正面事件</view>
+        <view
+          class="bullet-row"
+          wx:for="{{section.positiveEvents}}"
+          wx:key="*this"
+          wx:for-item="text"
+        >
+          <view class="bullet positive"></view>
+          <view class="bullet-text">{{text}}</view>
+        </view>
+      </block>
+
+      <block wx:if="{{section.risks.length || section.negativeEvents.length}}">
+        <view class="list-heading risk-heading">主要风险</view>
+        <view
+          class="bullet-row"
+          wx:for="{{section.risks}}"
+          wx:key="*this"
+          wx:for-item="text"
+        >
+          <view class="bullet risk"></view>
+          <view class="bullet-text">{{text}}</view>
+        </view>
+        <view
+          class="bullet-row"
+          wx:for="{{section.negativeEvents}}"
+          wx:key="*this"
+          wx:for-item="text"
+        >
+          <view class="bullet risk"></view>
+          <view class="bullet-text">{{text}}</view>
+        </view>
+      </block>
+
+      <block wx:if="{{section.uncertainEvents.length}}">
+        <view class="list-heading uncertain-heading">待观察事项</view>
+        <view
+          class="bullet-row"
+          wx:for="{{section.uncertainEvents}}"
+          wx:key="*this"
+          wx:for-item="text"
+        >
+          <view class="bullet uncertain"></view>
+          <view class="bullet-text">{{text}}</view>
+        </view>
+      </block>
+    </view>
+
+    <view class="card report-card">
+      <view class="section-title">预期走势</view>
+      <view class="outlook-grid">
+        <view class="outlook-item">
+          <view class="outlook-head">
+            <text>{{report.shortTerm.title}}</text>
+            <text class="outlook-view">{{report.shortTerm.view}}</text>
+          </view>
+          <view class="outlook-horizon">{{report.shortTerm.horizon}}</view>
+          <view class="mini-heading">主要驱动</view>
+          <view
+            class="number-row"
+            wx:for="{{report.shortTerm.drivers}}"
+            wx:key="*this"
+          >
+            <text class="number-index">{{index + 1}}</text>
+            <text>{{item}}</text>
+          </view>
+          <view class="mini-heading invalid-heading">判断失效条件</view>
+          <view
+            class="plain-list"
+            wx:for="{{report.shortTerm.invalidations}}"
+            wx:key="*this"
+          >· {{item}}</view>
+        </view>
+
+        <view class="outlook-item">
+          <view class="outlook-head">
+            <text>{{report.mediumTerm.title}}</text>
+            <text class="outlook-view">{{report.mediumTerm.view}}</text>
+          </view>
+          <view class="outlook-horizon">{{report.mediumTerm.horizon}}</view>
+          <view class="mini-heading">主要驱动</view>
+          <view
+            class="number-row"
+            wx:for="{{report.mediumTerm.drivers}}"
+            wx:key="*this"
+          >
+            <text class="number-index">{{index + 1}}</text>
+            <text>{{item}}</text>
+          </view>
+          <view class="mini-heading invalid-heading">判断失效条件</view>
+          <view
+            class="plain-list"
+            wx:for="{{report.mediumTerm.invalidations}}"
+            wx:key="*this"
+          >· {{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card report-card" wx:if="{{report.scenarios.length}}">
+      <view class="section-title">三种情景推演</view>
+      <view
+        class="scenario {{item.tone}}"
+        wx:for="{{report.scenarios}}"
+        wx:key="name"
+      >
+        <view class="scenario-name">{{item.name}}</view>
+        <view
+          class="scenario-condition"
+          wx:for="{{item.conditions}}"
+          wx:key="*this"
+          wx:for-item="condition"
+        >· {{condition}}</view>
+        <view class="scenario-result">
+          <text class="scenario-label">可能走势</text>
+          <text>{{item.expectedDirection}}</text>
+        </view>
+        <view class="scenario-result">
+          <text class="scenario-label">应对思路</text>
+          <text>{{item.response}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card report-card action-card">
+      <view class="section-title">投资行动参考</view>
+      <view class="stance-row">
+        <text>当前态度</text>
+        <text class="stance-value">{{report.stance}}</text>
+      </view>
+
+      <view class="action-group" wx:if="{{report.suitableFor.length}}">
+        <view class="list-heading">适合关注的人群</view>
+        <view
+          class="tag"
+          wx:for="{{report.suitableFor}}"
+          wx:key="*this"
+        >{{item}}</view>
+      </view>
+
+      <view class="action-group" wx:if="{{report.watchIndicators.length}}">
+        <view class="list-heading">后续跟踪指标</view>
+        <view
+          class="check-row"
+          wx:for="{{report.watchIndicators}}"
+          wx:key="*this"
+        >
+          <text class="check-icon">○</text>
+          <text>{{item}}</text>
+        </view>
+      </view>
+
+      <view class="action-group" wx:if="{{report.riskNotes.length}}">
+        <view class="list-heading risk-heading">仓位与风险提示</view>
+        <view
+          class="check-row risk-row"
+          wx:for="{{report.riskNotes}}"
+          wx:key="*this"
+        >
+          <text class="check-icon">!</text>
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card report-card quality-card">
+      <view class="section-title">数据质量与局限</view>
+      <view class="quality-line">
+        <text class="quality-label">校验状态</text>
+        <text>{{report.validationStatus || "未提供"}}</text>
+      </view>
+      <view class="quality-line">
+        <text class="quality-label">分析模型</text>
+        <text>{{report.model || "未提供"}}</text>
+      </view>
+      <block wx:if="{{report.missingSections.length}}">
+        <view class="list-heading uncertain-heading">缺失数据</view>
+        <view class="plain-list" wx:for="{{report.missingSections}}" wx:key="*this">
+          · {{item}}
+        </view>
+      </block>
+      <block wx:if="{{report.limitations.length}}">
+        <view class="list-heading uncertain-heading">分析局限</view>
+        <view class="plain-list" wx:for="{{report.limitations}}" wx:key="*this">
+          · {{item}}
+        </view>
+      </block>
+      <block wx:if="{{report.validationWarnings.length}}">
+        <view class="list-heading uncertain-heading">校验提醒</view>
+        <view class="plain-list" wx:for="{{report.validationWarnings}}" wx:key="*this">
+          · {{item}}
+        </view>
+      </block>
+    </view>
+
+    <view class="disclaimer">{{report.disclaimer}}</view>
+    <button class="home-action" bindtap="backHome">分析其他股票</button>
+  </block>
+</view>
